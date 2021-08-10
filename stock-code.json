@@ -1,0 +1,69 @@
+{
+    "data": [
+        {
+            "StockID": 497,
+            "StockCode": "AAA",
+            "Row": 1
+        },
+        {
+            "StockID": 498,
+            "StockCode": "AAM",
+            "Row": 2
+        },
+        {
+            "StockID": 13654,
+            "StockCode": "ABS",
+            "Row": 3
+        },
+        {
+            "StockID": 1,
+            "StockCode": "ABT",
+            "Row": 4
+        },
+        {
+            "StockID": 591,
+            "StockCode": "ACB",
+            "Row": 5
+        },
+        {
+            "StockID": 816,
+            "StockCode": "ACC",
+            "Row": 6
+        },
+        {
+            "StockID": 416,
+            "StockCode": "ACL",
+            "Row": 7
+        },
+        {
+            "StockID": 12429,
+            "StockCode": "ADS",
+            "Row": 8
+        },
+        {
+            "StockID": 13597,
+            "StockCode": "AGG",
+            "Row": 9
+        },
+        {
+            "StockID": 928,
+            "StockCode": "AGM",
+            "Row": 10
+        },
+        {
+            "StockID": 241,
+            "StockCode": "AGR",
+            "Row": 11
+        },
+        {
+            "StockID": 12174,
+            "StockCode": "AMD",
+            "Row": 12
+        },
+        {
+            "StockID": 325,
+            "StockCode": "ANV",
+            "Row": 13
+        }
+    ]
+}

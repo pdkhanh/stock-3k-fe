@@ -2,6 +2,8 @@ let stocks = [];
 
 const yourDate = new Date()
 let date = yourDate.toISOString().split('T')[0]
+document.getElementById('date').value = date
+
 
 function setDate(){
   date = document.getElementById('date').value

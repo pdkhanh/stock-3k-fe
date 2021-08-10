@@ -1,7 +1,7 @@
 let stocks = [];
 
 async function loadUsers() {
-  const response = await fetch("http://localhost:8080/api/stockDaily?date=2021-08-10", { mode: 'cors' });
+  const response = await fetch("https://stock-3k-be.herokuapp.com/api/stockDaily?date=2021-08-10", { mode: 'cors' });
   stocks = await response.json();
   userToTableRow();
 }

@@ -6,9 +6,10 @@ const headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 };
 
-var today = dateFormat(new Date(), "yyyy-mm-dd");
+// var today = dateFormat(new Date() - 1, "yyyy-mm-dd");
+var today = "2021-08-09"
 
-var dayMinus30 = new Date(); 
+var dayMinus30 = new Date();
 dayMinus30.setDate(dayMinus30.getDate() - 30);
 dayMinus30 = dateFormat(dayMinus30, "yyyy-mm-dd");
 
@@ -22,14 +23,18 @@ function getStockData(stockID) {
             headers: headers,
             json: true,
         }, function (error, response, body) {
-            resolve(getData(response.body[1]))
-            if(error) reject(error)
+            try {
+                resolve(getData(response.body[1]))
+            } catch (err) {
+                console.log(err)
+            }
+            if (error) reject(error)
         })
     });
 }
 
-function getData(body){
-    try{
+function getData(body) {
+    try {
         open = []
         close = []
         high = []
@@ -41,7 +46,7 @@ function getData(body){
             high.push(element['HighestPrice'])
             low.push(element['LowestPrice'])
         });
-        
+
         var data = {
             'stockCode': stockCode,
             'stockName': body[1].StockName,
@@ -50,18 +55,18 @@ function getData(body){
             'change': body[0].Change,
             'perChange': body[0].PerChange,
             'mTotalVol': body[0].M_TotalVol,
-            'marketCap': body[0].MarketCap, 
+            'marketCap': body[0].MarketCap,
         }
         for (let index = 1; index < 31; index++) {
             data[`dayInput${index}`] = {
-                'open':open.slice(0,index).reverse(),
-                'high':high.slice(0,index).reverse(),
-                'close':close.slice(0,index).reverse(),
-                'low':low.slice(0,index).reverse(),
-             }
+                'open': open.slice(0, index).reverse(),
+                'high': high.slice(0, index).reverse(),
+                'close': close.slice(0, index).reverse(),
+                'low': low.slice(0, index).reverse(),
+            }
         }
         return data
-    }catch(err){
+    } catch (err) {
         console.log(body)
     }
 }

@@ -1,13 +1,23 @@
 let stocks = [];
 
+const yourDate = new Date()
+let date = yourDate.toISOString().split('T')[0]
+
+function setDate(){
+  date = document.getElementById('date').value
+  loadUsers()
+}
+
 async function loadUsers() {
-  const response = await fetch("https://stock-3k-be.herokuapp.com/api/stockDaily?date=2021-08-10", { mode: 'cors' });
+  const response = await fetch(`https://stock-3k-be.herokuapp.com/api/stockDaily?date=${date}`, { mode: 'cors' });
   stocks = await response.json();
   userToTableRow();
 }
 
 function userToTableRow() {
-  const tbody = document.querySelector("tbody");
+  let tbody = document.querySelector("tbody");
+  tbody.innerHTML = ''
+  console.log(tbody)
   stocks.forEach(stock => {
     tbody.innerHTML += createRow(stock);
   });
@@ -22,7 +32,6 @@ function createPattern(patterns) {
 }
 
 function priceColor(price) {
-  console.log(price)
   if (price > 6.5) return "violet"
   if (price > 0) return "green"
   if (price == 0) return "orange"

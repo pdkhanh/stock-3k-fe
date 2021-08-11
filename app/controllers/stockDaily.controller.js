@@ -36,7 +36,6 @@ exports.findStock = async (req, res) => {
 
 async function loopList(list) {
     let count = 0
-    console.log(list)
     await Promise.all(list.map(async (e) => {
         let patternResult = await findPattern(e.StockID);
         if (patternResult == undefined) return
@@ -95,7 +94,7 @@ exports.findAll = (req, res) => {
     const date = req.query.date;
     var condition = date ? { date: { $regex: new RegExp(date), $options: "i" } } : {};
 
-    StockDaily.find(condition).distinct('code')
+    StockDaily.find(condition)
         .then(data => {
             res.send(data);
         })

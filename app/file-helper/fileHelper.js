@@ -2,7 +2,6 @@ var drawCandleStick = require('draw-candlestick');
 var fs = require('fs');
 
 function writeImage(stockCode, dayInput){
-    console.log(dayInput)
     var fileImageName = `./output/${stockCode}.png`;
     var imageBuffer = drawCandleStick(dayInput);
 

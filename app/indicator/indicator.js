@@ -28,7 +28,7 @@ function scanCandlestick(data) {
 
         if (pattern.length > 0) {
             image = fileHelper.writeImage(data.stockCode, data.dayInput12);
-            fileHelper.writePatternResult(data, pattern);
+            // fileHelper.writePatternResult(data, pattern);
         }
 
         var result = {

@@ -6,8 +6,7 @@ const headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
 };
 
-// var today = dateFormat(new Date() - 1, "yyyy-mm-dd");
-var today = "2021-08-09"
+var today = dateFormat(new Date(), "yyyy-mm-dd");
 
 var dayMinus30 = new Date();
 dayMinus30.setDate(dayMinus30.getDate() - 30);
@@ -16,7 +15,6 @@ dayMinus30 = dateFormat(dayMinus30, "yyyy-mm-dd");
 function getStockData(stockID) {
     return new Promise(function (resolve, reject) {
         URL = `https://finance.vietstock.vn/data/KQGDThongKeGiaStockPaging?page=1&pageSize=20&catID=1&stockID=${stockID}&fromDate=${dayMinus30}&toDate=${today}`;
-        console.log(URL)
         request({
             url: URL,
             method: "GET",

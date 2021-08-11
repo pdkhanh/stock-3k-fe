@@ -3,6 +3,8 @@ const db = require("../models");
 const vietstock = require("../vietstock/vietstock.js")
 const StockDaily = db.StockDaily;
 var indicator = require("../indicator/indicator.js")
+const telegram = require("../telegram/telegram.js")
+var dateFormat = require('dateformat');
 
 // Create and Save a new Tutorial
 exports.create = (req, res) => {
@@ -28,16 +30,35 @@ exports.create = (req, res) => {
 
 exports.findStock = async (req, res) => {
     let stockList = require('../../stock-code.json');
-    stockList.data.forEach(e => findPattern(e.StockID))
     res.send('OK')
+    let count = await loopList(stockList.data)
+    var today = dateFormat(new Date(), "yyyy-mm-dd");
+    let message = today + ' found: ' + count + '\nhttps://pdkhanh.github.io/stock-3k-fe/'
+    telegram.sendMessage(message)
 };
 
-async function findPattern(stockId){
+async function loopList(list) {
+    let count = 0
+    console.log(list)
+    await Promise.all(list.map(async (e) => {
+        let patternResult = await findPattern(e.StockID);
+        if (patternResult == undefined) return
+        try {
+            count++;
+            saveStockPattern(patternResult)
+        } catch (err) {
+            console.log(patternResult)
+        }
+    }));
+    return count
+}
+
+async function findPattern(stockId) {
     let stock
     let data = await vietstock.getStockData(stockId);
-    if(data.mTotalVol < 100000) return
+    if (data.mTotalVol < 100000) return
     let indicatorResult = indicator.scanCandlestick(data)
-    if(indicatorResult.pattern.length > 0 ) {
+    if (indicatorResult.pattern.length > 0) {
         stock = {
             code: data.stockCode,
             name: data.stockName,
@@ -50,12 +71,11 @@ async function findPattern(stockId){
             image: indicatorResult.image,
             pattern: indicatorResult.pattern,
         }
-        saveStockPattern(stock)
     }
-
+    return stock
 }
 
-function saveStockPattern(data){
+function saveStockPattern(data) {
     const stockDaily = new StockDaily({
         date: data.date,
         code: data.code,
@@ -77,17 +97,17 @@ function saveStockPattern(data){
 exports.findAll = (req, res) => {
     const date = req.query.date;
     var condition = date ? { date: { $regex: new RegExp(date), $options: "i" } } : {};
-  
+
     StockDaily.find(condition)
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while retrieving tutorials."
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving tutorials."
+            });
         });
-      });
 };
 
 // Find a single Tutorial with an id

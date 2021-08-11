@@ -23,6 +23,7 @@
     "technicalindicators": "^3.1.0",
     "request": "^2.88.2",
     "dateformat": "^4.5.1",
-    "draw-candlestick": "^2.0.3"
+    "draw-candlestick": "^2.0.3",
+    "telegram-bot-api": "^2.0.1"
   }
 }

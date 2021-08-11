@@ -19,7 +19,6 @@ async function loadUsers() {
 function userToTableRow() {
   let tbody = document.querySelector("tbody");
   tbody.innerHTML = ''
-  console.log(tbody)
   stocks.forEach(stock => {
     tbody.innerHTML += createRow(stock);
   });

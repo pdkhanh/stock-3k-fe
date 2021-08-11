@@ -6,15 +6,12 @@ var indicator = require("../indicator/indicator.js")
 const telegram = require("../telegram/telegram.js")
 var dateFormat = require('dateformat');
 
-// Create and Save a new Tutorial
 exports.create = (req, res) => {
-    // Create a Tutorial
     const stockDaily = new StockDaily({
         date: req.body.date,
         stock: req.body.stock
     });
 
-    // Save Tutorial in the database
     stockDaily
         .save(stockDaily)
         .then(data => {
@@ -56,7 +53,7 @@ async function loopList(list) {
 async function findPattern(stockId) {
     let stock
     let data = await vietstock.getStockData(stockId);
-    if (data.mTotalVol < 100000) return
+    if (data.mTotalVol < 500000) return
     let indicatorResult = indicator.scanCandlestick(data)
     if (indicatorResult.pattern.length > 0) {
         stock = {
@@ -98,7 +95,7 @@ exports.findAll = (req, res) => {
     const date = req.query.date;
     var condition = date ? { date: { $regex: new RegExp(date), $options: "i" } } : {};
 
-    StockDaily.find(condition)
+    StockDaily.find(condition).distinct('code')
         .then(data => {
             res.send(data);
         })

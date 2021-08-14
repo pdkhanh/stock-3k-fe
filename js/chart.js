@@ -14,7 +14,7 @@ function setDate() {
 }
 
 async function loadData() {
-    const response = await fetch(`https://stock-3k-be.herokuapp.com//api/stockDaily?date=${date}`, { mode: 'cors' });
+    const response = await fetch(`https://stock-3k-be.herokuapp.com/api/stockDaily?date=${date}`, { mode: 'cors' });
     stocks = await response.json();
 }
 

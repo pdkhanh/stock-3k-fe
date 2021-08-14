@@ -1,0 +1,36 @@
+td {
+    border: 1px solid black;
+    width: 50%;
+    text-align: center;
+    margin: 12px 12px 12px 12px;
+    padding: 12px 12px 12px 12px;
+}
+
+.info {
+    font-weight: bold;
+}
+
+.pricePurple {
+    color: rgb(234, 0, 255);
+    font-weight: bold;
+}
+
+.priceGreen {
+    color: rgb(52, 184, 0);
+    font-weight: bold;
+}
+
+.priceOrange {
+    color: orange;
+    font-weight: bold;
+}
+
+.priceRed {
+    color: red;
+    font-weight: bold;
+}
+
+.priceBlue {
+    color: blue;
+    font-weight: bold;
+}

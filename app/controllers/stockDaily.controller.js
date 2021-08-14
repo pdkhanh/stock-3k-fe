@@ -19,34 +19,51 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the Tutorial."
+                message: err.message || "Some error occurred while creating the Tutorial."
             });
         });
 };
 
-exports.findStock = async (req, res) => {
+exports.findStock = async(req, res) => {
     let stockList = require('../../stock-code.json');
     res.send('OK')
     let count = await loopList(stockList.data)
     var today = dateFormat(new Date(), "yyyy-mm-dd");
     let message = today + ' found: ' + count + '\nhttps://pdkhanh.github.io/stock-3k-fe/'
-    telegram.sendMessage(message)
+    console.log(message)
+        // telegram.sendMessage(message)
 };
 
 async function loopList(list) {
     let count = 0
-    await Promise.all(list.map(async (e) => {
+    await Promise.all(list.map(async(e) => {
         let patternResult = await findPattern(e.StockID);
         if (patternResult == undefined) return
         try {
             count++;
+            let dailyDataAppended = await appendDailyData(e.StockID)
+            patternResult.daily = patternResult.daily.concat(dailyDataAppended)
+            console.log(patternResult.daily)
             saveStockPattern(patternResult)
         } catch (err) {
             console.log(patternResult)
         }
     }));
     return count
+}
+
+async function appendDailyData(stockId) {
+    let dailyData = [];
+    var today = new Date();
+    let numberOfMonth = 3;
+    let numberOfDayPerMonth = 28;
+    for (let i = 1; i <= numberOfMonth; i++) {
+        let fromDate = dateFormat(new Date().setDate(today.getDate() - (i + 1) * numberOfDayPerMonth), "yyyy-mm-dd");
+        let toDate = dateFormat(new Date().setDate(today.getDate() - i * numberOfDayPerMonth + 1), "yyyy-mm-dd");
+        let monthlyData = await vietstock.getStockDataByDate(stockId, fromDate, toDate)
+        dailyData = dailyData.concat(monthlyData.daily)
+    }
+    return dailyData
 }
 
 async function findPattern(stockId) {
@@ -65,6 +82,7 @@ async function findPattern(stockId) {
             mTotalVol: data.mTotalVol,
             marketCap: data.marketCap,
             image: indicatorResult.image,
+            daily: data.daily,
             pattern: indicatorResult.pattern,
         }
     }
@@ -83,6 +101,7 @@ function saveStockPattern(data) {
         ptTotalVol: data.ptTotalVol,
         image: data.image,
         marketCap: data.marketCap,
+        daily: data.daily,
         pattern: data.pattern
     });
     stockDaily
@@ -100,8 +119,7 @@ exports.findAll = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message:
-                    err.message || "Some error occurred while retrieving tutorials."
+                message: err.message || "Some error occurred while retrieving tutorials."
             });
         });
 };

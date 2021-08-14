@@ -8,13 +8,34 @@ const headers = {
 
 var today = dateFormat(new Date(), "yyyy-mm-dd");
 
-var dayMinus30 = new Date();
-dayMinus30.setDate(dayMinus30.getDate() - 30);
-dayMinus30 = dateFormat(dayMinus30, "yyyy-mm-dd");
+var dayMinus28 = new Date();
+dayMinus28.setDate(dayMinus28.getDate() - 28);
+dayMinus28 = dateFormat(dayMinus28, "yyyy-mm-dd");
 
 function getStockData(stockID) {
     return new Promise(function (resolve, reject) {
-        URL = `https://finance.vietstock.vn/data/KQGDThongKeGiaStockPaging?page=1&pageSize=20&catID=1&stockID=${stockID}&fromDate=${dayMinus30}&toDate=${today}`;
+        URL = `https://finance.vietstock.vn/data/KQGDThongKeGiaStockPaging?page=1&pageSize=20&catID=1&stockID=${stockID}&fromDate=${dayMinus28}&toDate=${today}`;
+        console.log(URL)
+        request({
+            url: URL,
+            method: "GET",
+            headers: headers,
+            json: true,
+        }, function (error, response, body) {
+            try {
+                resolve(getData(response.body[1]))
+            } catch (err) {
+                console.log(err)
+            }
+            if (error) reject(error)
+        })
+    });
+}
+
+function getStockDataByDate(stockID, from, to) {
+    return new Promise(function (resolve, reject) {
+        URL = `https://finance.vietstock.vn/data/KQGDThongKeGiaStockPaging?page=1&pageSize=20&catID=1&stockID=${stockID}&fromDate=${from}&toDate=${to}`;
+        console.log(URL)
         request({
             url: URL,
             method: "GET",
@@ -37,14 +58,24 @@ function getData(body) {
         close = []
         high = []
         low = []
+        daily = []
+        var regExp = /\(([^)]+)\)/;
         body.forEach(element => {
             stockCode = element['StockCode']
-            open.push(element['OpenPrice'])
-            close.push(element['ClosePrice'])
-            high.push(element['HighestPrice'])
-            low.push(element['LowestPrice'])
+            let openPrice = element['OpenPrice']
+            let closePrice = element['ClosePrice']
+            let highstPrice = element['ClosePrice']
+            let lowestPrice = element['LowestPrice']
+            let totalVol = element['M_TotalVol']
+            let timeStamps = regExp.exec(element['TradingDate'])[1]
+            let date = dateFormat(new Date(parseInt(timeStamps)), "yyyy-mm-dd");
+            open.push(openPrice)
+            close.push(closePrice)
+            high.push(highstPrice)
+            low.push(lowestPrice)
+            dailyData = [date, openPrice, highstPrice, lowestPrice, closePrice, totalVol]
+            daily.push(dailyData)
         });
-
         var data = {
             'stockCode': stockCode,
             'stockName': body[1].StockName,
@@ -54,6 +85,7 @@ function getData(body) {
             'perChange': body[0].PerChange,
             'mTotalVol': body[0].M_TotalVol,
             'marketCap': body[0].MarketCap,
+            'daily': daily
         }
         for (let index = 1; index < 31; index++) {
             data[`dayInput${index}`] = {
@@ -71,4 +103,5 @@ function getData(body) {
 
 exports.getData = getData;
 exports.getStockData = getStockData;
+exports.getStockDataByDate = getStockDataByDate;
 

@@ -8,8 +8,8 @@ module.exports = mongoose => {
       change: Number,
       perChange: Number,
       mTotalVol: Number,
-      image: Buffer,
       marketCap: Number,
+      daily: Array,
       pattern: Array
     },
     { timestamps: true },

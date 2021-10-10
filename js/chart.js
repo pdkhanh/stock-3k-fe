@@ -1,8 +1,8 @@
 let stocks = [];
 
 const yourDate = new Date()
-    // let date = yourDate.toISOString().split('T')[0]
-let date = '2021-09-27'
+let date = yourDate.toISOString().split('T')[0]
+    // let date = '2021-09-27'
 document.getElementById('date').value = date
 
 function setDate() {

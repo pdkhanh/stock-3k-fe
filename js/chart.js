@@ -149,6 +149,7 @@ async function loadSpinner(display) {
 }
 
 async function rock() {
+    await loadSpinner(true)
     await loadData()
     await addChart()
     await createChart()

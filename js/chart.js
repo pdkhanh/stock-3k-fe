@@ -1,10 +1,12 @@
 let stocks = [];
 
 const yourDate = new Date()
-let date = yourDate.toISOString().split('T')[0]
+    // let date = yourDate.toISOString().split('T')[0]
+let date = '2021-09-27'
 document.getElementById('date').value = date
 
 function setDate() {
+    loadSpinner(true)
     date = document.getElementById('date').value
     let table = document.querySelector("#chartTable")
     while (table.rows.length > 0) {
@@ -140,10 +142,17 @@ async function addChart() {
     });
 }
 
+async function loadSpinner(display) {
+    let spinner = document.querySelector('.orbit-spinner')
+    let cssDisplay = display ? 'block' : 'none'
+    spinner.style.setProperty("--is-display", cssDisplay);
+}
+
 async function rock() {
     await loadData()
     await addChart()
     await createChart()
+    await loadSpinner(false)
 }
 
 rock()

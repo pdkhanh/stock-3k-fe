@@ -3,7 +3,6 @@ module.exports = mongoose => {
     {
       date: String,
       code: String,
-      name: String,
       price: Number,
       change: Number,
       perChange: Number,

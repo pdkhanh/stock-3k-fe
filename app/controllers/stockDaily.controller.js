@@ -1,10 +1,12 @@
 const { lowest } = require("technicalindicators");
 const db = require("../models");
 const vietstock = require("../vietstock/vietstock.js")
+const fialda = require("../fialda/fialda.js")
+const telegram = require("../telegram/telegram.js")
 const StockDaily = db.StockDaily;
 var indicator = require("../indicator/indicator.js")
-const telegram = require("../telegram/telegram.js")
 var dateFormat = require('dateformat');
+var jsonpath = require('jsonpath');
 
 exports.create = (req, res) => {
     const stockDaily = new StockDaily({
@@ -24,19 +26,19 @@ exports.create = (req, res) => {
         });
 };
 
-exports.findStock = async(req, res) => {
+exports.findStock = async (req, res) => {
     let stockList = require('../../stock-code.json');
     res.send('OK')
     let count = await loopList(stockList.data)
     var today = dateFormat(new Date(), "yyyy-mm-dd");
     let message = today + ' found: ' + count + '\nhttps://pdkhanh.github.io/stock-3k-fe/'
     console.log(message)
-        // telegram.sendMessage(message)
+    // telegram.sendMessage(message)
 };
 
 async function loopList(list) {
     let count = 0
-    await Promise.all(list.map(async(e) => {
+    await Promise.all(list.map(async (e) => {
         let patternResult = await findPattern(e.StockID);
         if (patternResult == undefined) return
         try {
@@ -93,7 +95,6 @@ function saveStockPattern(data) {
     const stockDaily = new StockDaily({
         date: data.date,
         code: data.code,
-        name: data.name,
         price: data.price,
         change: data.change,
         perChange: data.perChange,
@@ -123,6 +124,48 @@ exports.findAll = (req, res) => {
             });
         });
 };
+
+
+exports.findMACD = async (req, res) => {
+    let macdData = await fialda.getMACD()
+    let stockList = jsonpath.query(JSON.parse(macdData), '$.result')[0]
+    let result = await getAndSaveStockData(stockList)
+    res.send(result)
+    let message = generateMessageMACD(result)
+    telegram.sendMessage(message)
+};
+
+async function getAndSaveStockData(stockList) {
+    let data = []
+    await Promise.all(stockList.map(async (e) => {
+        try {
+            let stockData = await vietstock.getStockData(e)
+            let item = {
+                code: stockData.code,
+                price: stockData.price,
+                change: stockData.change,
+                perChange: stockData.perChange
+            }
+            data.push(item)
+            saveStockPattern(stockData)
+        } catch (err) {
+            console.log(err)
+        }
+    }));
+    return data
+}
+
+function generateMessageMACD(data) {
+    let today = dateFormat(new Date(), "yyyy-mm-dd");
+    let count = data.length
+    let stockData = ''
+    let url = 'https://pdkhanh.github.io/stock-3k-fe/'
+    data.forEach(element => {
+        stockData += `${element.code} ${element.price} (${element.change} ${element.perChange}%)\n`
+    });
+    let message = `${today} found ${count} \n${stockData}${url}`
+    return message
+}
 
 // Find a single Tutorial with an id
 exports.findOne = (req, res) => {

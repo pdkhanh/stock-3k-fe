@@ -2,8 +2,15 @@ let stocks = [];
 
 const yourDate = new Date()
 let date = yourDate.toISOString().split('T')[0]
-    // let date = '2021-09-27'
-document.getElementById('date').value = date
+initDate()
+
+function initDate() {
+    let url = new URL(window.location.href)
+    let searchDate = url.searchParams.get('date')
+    console.log(searchDate)
+    date = searchDate ? searchDate : date
+    document.getElementById('date').value = date
+}
 
 function setDate() {
     loadSpinner(true)
@@ -93,7 +100,8 @@ function createInfoDiv(stock) {
     let mainDiv = document.createElement("div")
 
     let stockInfoDiv = document.createElement("div")
-    stockInfoDiv.innerText = stock.code + " - " + stock.name + "\n"
+    // stockInfoDiv.innerText = stock.code + " - " + stock.name + "\n"
+    stockInfoDiv.innerText = stock.code + "\n"
     stockInfoDiv.className = "info"
 
     let priceInfoP = document.createElement("p")

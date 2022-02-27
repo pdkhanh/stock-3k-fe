@@ -45,6 +45,19 @@ function addCommas(nStr) {
     return x1 + x2;
 }
 
+function convertToInternationalCurrencySystem(labelValue) {
+    // Nine Zeroes for Billions
+    return Math.abs(Number(labelValue)) >= 1.0e+9
+        ? (Math.abs(Number(labelValue)) / 1.0e+9).toFixed(2) + "B"
+        // Six Zeroes for Millions 
+        : Math.abs(Number(labelValue)) >= 1.0e+6
+            ? (Math.abs(Number(labelValue)) / 1.0e+6).toFixed(2) + "M"
+            // Three Zeroes for Thousands
+            : Math.abs(Number(labelValue)) >= 1.0e+3
+                ? (Math.abs(Number(labelValue)) / 1.0e+3).toFixed(2) + "K"
+                : Math.abs(Number(labelValue));
+}
+
 function createChartContainer(stock) {
     var dataTable = anychart.data.table();
     dataTable.addData(stock.daily);
@@ -100,12 +113,11 @@ function createInfoDiv(stock) {
     let mainDiv = document.createElement("div")
 
     let stockInfoDiv = document.createElement("div")
-    // stockInfoDiv.innerText = stock.code + " - " + stock.name + "\n"
-    stockInfoDiv.innerText = stock.code + "\n"
+    stockInfoDiv.innerText = stock.code + " - " + stock.name + ' - ' + stock.exchange + "\n"
     stockInfoDiv.className = "info"
 
     let priceInfoP = document.createElement("p")
-    priceInfoP.innerText = `${addCommas(stock.price)} (${stock.change} ${stock.perChange}%) - ${addCommas(stock.mTotalVol)}`
+    priceInfoP.innerText = `${addCommas(stock.price)}(${stock.change} ${stock.perChange}%) - ${convertToInternationalCurrencySystem(stock.mTotalVol)}(${convertToInternationalCurrencySystem(stock.mTotalVal)})`
     priceInfoP.className = getPricePerChangeColor(stock.perChange)
 
     let patternDiv = document.createElement("div")
